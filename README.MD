@@ -1,14 +1,5 @@
-This is mi personal Fiber boilerplate with a structure to start to work!
+Pasos para ejecutar:
 
-this boilerplate uses:
-
-<ol>
-    <li>github.com/gofiber/fiber/v2</li>
-    <li>github.com/golang-jwt/jwt</li>
-    <li>github.com/joho/godotenv</li>
-    <li>gopkg.in/mail.v2</li>
-    <li>gorm.io/driver/mysql</li>
-    <li>gorm.io/gorm</li>
-    <li>github.com/golang-module/carbon/v2</li>
-    <li></li>
-</ol>
+Tener instalado golang 1.18
+1. go mod tidy
+2. go run main.go

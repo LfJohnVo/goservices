@@ -2,7 +2,7 @@ package main
 
 import (
 	"fiber-boilerplate/config"
-	"fiber-boilerplate/databases"
+	//"fiber-boilerplate/databases"
 	"fiber-boilerplate/middlewares"
 	"fiber-boilerplate/pkg/utils"
 	"fiber-boilerplate/routes"
@@ -23,7 +23,7 @@ func main() {
 	middlewares.Params(app)
 
 	//connect database
-	databases.Connect()
+	//databases.Connect()
 
 	routes.SetupRoutes(app)
 	routes.NotFoundRoute(app) // Register route for 404 Error.

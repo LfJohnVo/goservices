@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: 'homestead'
+      MYSQL_USER: 'homestead'
+      MYSQL_PASSWORD: 'secret'
+      MYSQL_ROOT_PASSWORD: 'secret'
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    ports:
+      - 33069:3306
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+        - gofibernetwork
+
+  go:
+    container_name: gofiber
+    build:
+      context: .
+    depends_on:
+      - mysql
+    ports:
+      - "3000:3000"
+networks:
+  gofibernetwork:

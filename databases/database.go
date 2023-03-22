@@ -1,8 +1,8 @@
 package databases
 
 import (
-	"fiber-boilerplate/config"
-	"fiber-boilerplate/models"
+	"goservices/config"
+	"goservices/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

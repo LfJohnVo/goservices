@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"fiber-boilerplate/databases"
-	"fiber-boilerplate/models"
+	"goservices/databases"
+	"goservices/models"
 
 	"github.com/gofiber/fiber/v2"
 )

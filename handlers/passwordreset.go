@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"encoding/hex"
-	"fiber-boilerplate/config"
-	"fiber-boilerplate/databases"
-	"fiber-boilerplate/models"
-	"fiber-boilerplate/pkg"
+	"goservices/config"
+	"goservices/databases"
+	"goservices/models"
+	"goservices/pkg"
 	"math/rand"
 
 	"github.com/gofiber/fiber/v2"

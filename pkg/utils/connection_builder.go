@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"fiber-boilerplate/config"
 	"fmt"
+	"goservices/config"
 	"os"
 )
 

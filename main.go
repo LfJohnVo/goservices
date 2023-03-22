@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fiber-boilerplate/config"
-	//"fiber-boilerplate/databases"
-	"fiber-boilerplate/middlewares"
-	"fiber-boilerplate/pkg/utils"
-	"fiber-boilerplate/routes"
+	"goservices/config"
+	//"goservices/databases"
+	"goservices/middlewares"
+	"goservices/pkg/utils"
+	"goservices/routes"
 	"os"
 
 	"github.com/gofiber/fiber/v2"

@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"fiber-boilerplate/databases"
-	"fiber-boilerplate/models"
+	"goservices/databases"
+	"goservices/models"
 	"strconv"
 	"time"
 

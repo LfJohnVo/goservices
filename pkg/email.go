@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"fiber-boilerplate/config"
+	"goservices/config"
 	"log"
 	"strconv"
 

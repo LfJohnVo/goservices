@@ -1,4 +1,4 @@
-module fiber-boilerplate
+module goservices
 
 go 1.18
 

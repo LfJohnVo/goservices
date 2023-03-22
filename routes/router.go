@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"fiber-boilerplate/handlers"
+	"goservices/handlers"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -2,18 +2,20 @@ package main
 
 import (
 	"goservices/config"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/golang-module/carbon/v2"
+
 	//"goservices/databases"
 	"goservices/middlewares"
 	"goservices/pkg/utils"
 	"goservices/routes"
 	"os"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/golang-module/carbon/v2"
 )
 
 func main() {
 	carbon.Now().ToDateTimeString()
+
 	// Define Fiber config.
 	config := config.FiberConfig()
 

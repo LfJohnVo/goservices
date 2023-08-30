@@ -9,6 +9,14 @@ import (
 func SetupRoutes(app *fiber.App) {
 
 	app.Get("/", handlers.Welcome)
+
+	app.Get("/index", func(c *fiber.Ctx) error {
+		// Render index template
+		return c.Render("index", fiber.Map{
+			"Title": "Hello, World!",
+		})
+	})
+
 	// Middleware
 	api := app.Group("/api")
 

@@ -11,20 +11,19 @@ import (
 
 var Database *gorm.DB
 
-var DATABASE_URI string = config.GetEnvValue("DBUser") + ":" + config.GetEnvValue("DBPassword") + "@tcp(" + config.GetEnvValue("DBHost") + ":" + config.GetEnvValue("DBPort") + ")/" + config.GetEnvValue("DBName") + "?charset=utf8mb4&parseTime=True&loc=Local"
-
 func Connect() error {
 	var err error
-	var db *gorm.DB
 
 	switch config.GetEnvValue("DBConnection") {
 	case "mysql":
-		db, err = gorm.Open(mysql.Open(DATABASE_URI), &gorm.Config{
+		var DATABASE_URI string = config.GetEnvValue("DBUser") + ":" + config.GetEnvValue("DBPassword") + "@tcp(" + config.GetEnvValue("DBHost") + ":" + config.GetEnvValue("DBPort") + ")/" + config.GetEnvValue("DBName") + "?charset=utf8mb4&parseTime=True&loc=Local"
+		Database, err = gorm.Open(mysql.Open(DATABASE_URI), &gorm.Config{
 			SkipDefaultTransaction: true,
 			PrepareStmt:            true,
 		})
 	case "postgres":
-		db, err = gorm.Open(postgres.Open(DATABASE_URI), &gorm.Config{
+		var DATABASE_URI string = "user=" + config.GetEnvValue("DBUser") + " dbname=" + config.GetEnvValue("DBName") + " host=" + config.GetEnvValue("DBHost") + " port=" + config.GetEnvValue("DBPort") + " sslmode=disable"
+		Database, err = gorm.Open(postgres.Open(DATABASE_URI), &gorm.Config{
 			SkipDefaultTransaction: true,
 			PrepareStmt:            true,
 		})
@@ -39,7 +38,7 @@ func Connect() error {
 		panic(err)
 	}
 
-	db.Logger = logger.Default.LogMode(logger.Info)
+	Database.Logger = logger.Default.LogMode(logger.Info)
 
 	// db.AutoMigrate(&models.User{}, &models.PasswordReset{})
 

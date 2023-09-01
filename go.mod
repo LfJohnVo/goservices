@@ -7,7 +7,8 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-module/carbon/v2 v2.2.2
 	github.com/joho/godotenv v1.4.0
-	golang.org/x/crypto v0.8.0
+	github.com/xuri/excelize/v2 v2.8.0
+	golang.org/x/crypto v0.12.0
 	gopkg.in/mail.v2 v2.3.1
 	gorm.io/driver/mysql v1.4.4
 	gorm.io/driver/postgres v1.5.2
@@ -21,9 +22,15 @@ require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.3.1 // indirect
+	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/philhofer/fwd v1.1.2 // indirect
+	github.com/richardlehane/mscfb v1.0.4 // indirect
+	github.com/richardlehane/msoleps v1.0.3 // indirect
 	github.com/tinylib/msgp v1.1.8 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	github.com/xuri/efp v0.0.0-20230802181842-ad255f2331ca // indirect
+	github.com/xuri/nfp v0.0.0-20230819163627-dc951e3ffe1a // indirect
+	golang.org/x/net v0.14.0 // indirect
+	golang.org/x/text v0.12.0 // indirect
 )
 
 require (

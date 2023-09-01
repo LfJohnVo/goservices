@@ -22,7 +22,7 @@ func SetupRoutes(app *fiber.App) {
 	// Middleware
 	api := app.Group("/api")
 
-	api.Get("/timesheet/proyecto", handlers.GetProyectoReport)
+	api.Post("/timesheet/proyecto", handlers.GetProyectoReport)
 	api.Get("/metrics", monitor.New(monitor.Config{Title: "Metrics"}))
 
 	//email send

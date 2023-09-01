@@ -2,10 +2,16 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-module/carbon/v2"
+	"github.com/xuri/excelize/v2"
+	_ "github.com/xuri/excelize/v2"
 	"goservices/databases"
 	"goservices/models"
 	"log"
+	"net/http"
+	"os"
 )
 
 func GetProyectoReport(c *fiber.Ctx) error {
@@ -13,7 +19,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 
 	// Parse the request body into the RequestBody struct
 	if err := c.BodyParser(&requestBody); err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON("error" + err.Error())
 	}
 
 	// Access the ID from the parsed request body
@@ -92,13 +98,32 @@ func GetProyectoReport(c *fiber.Ctx) error {
 	// Create a slice to hold the query results
 	var timesheetHoras []models.TimesheetProyectoResponseBody
 
+	// Concatenate the date and time to the sheetName
+	sheetName := "ProyectoReport_" + carbon.Now().ToDateString()
+
+	f := excelize.NewFile()
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+
+	// Set column headers
+	headers := []string{"#", "Empleado", "Proyecto", "Tarea", "Descripción", "Empleado ID", "Fecha Día", "Supervisor", "Total Horas"}
+	for i, header := range headers {
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+i)), 1), header)
+	}
+
+	var i int = 2
 	for QueryResult.Next() {
+
 		var th models.TimesheetProyectoResponseBody
 
 		// Scan into pointers to handle NULL values
 		var id, EmpleadoName, Proyecto, Tarea, Descripcion, EmpleadoID, FechaDia, Supervisor, TotalHoras sql.NullString
 		if err = QueryResult.Scan(&id, &EmpleadoName, &Proyecto, &Tarea, &Descripcion, &EmpleadoID, &FechaDia, &Supervisor, &TotalHoras); err != nil {
 			log.Fatal(err)
+			return c.Status(fiber.StatusInternalServerError).JSON("error" + err.Error())
 		}
 
 		// Check if the values are not NULL and assign to the struct
@@ -131,9 +156,36 @@ func GetProyectoReport(c *fiber.Ctx) error {
 		}
 
 		// Append the result to the slice
+		//en caso de querer retornar el slice como json
 		timesheetHoras = append(timesheetHoras, th)
+
+		// Add the values to the sheet
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+0)), i), i-1)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+1)), i), th.EmpleadoName)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+2)), i), th.Proyecto)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+3)), i), th.Tarea)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+4)), i), th.Descripcion)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+5)), i), th.EmpleadoID)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+6)), i), th.FechaDia)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+7)), i), th.Supervisor)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+8)), i), th.TotalHoras)
+
+		i++
 	}
 
-	return c.Status(fiber.StatusOK).JSON(timesheetHoras)
+	if err := f.SaveAs("storage/" + sheetName + ".xlsx"); err != nil {
+		log.Println(err)
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to create the XLSX file",
+		})
+	}
+	defer os.Remove("storage/" + sheetName + ".xlsx") // Delete the temporary file after sending
+
+	// Set the response headers to indicate that it's an XLSX file
+	c.Set("Content-Disposition", "attachment; filename="+sheetName+".xlsx")
+	c.Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+	// Send the XLSX file as the response
+	return c.Status(fiber.StatusOK).SendFile("storage/" + sheetName + ".xlsx")
 
 }

@@ -5,6 +5,7 @@ import (
 	"goservices/models"
 
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -22,10 +23,10 @@ func Connect() error {
 			PrepareStmt:            true,
 		})
 	case "postgres":
-		// Database, err = gorm.Open(postgres.Open(DATABASE_URI), &gorm.Config{
-		// 	SkipDefaultTransaction: true,
-		// 	PrepareStmt:            true,
-		// })
+		Database, err = gorm.Open(postgres.Open(DATABASE_URI), &gorm.Config{
+			SkipDefaultTransaction: true,
+			PrepareStmt:            true,
+		})
 	case "sqlite":
 		// Database, err = gorm.Open(sqlite.Open(DATABASE_URI), &gorm.Config{
 		// 	SkipDefaultTransaction: true,

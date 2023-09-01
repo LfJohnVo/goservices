@@ -2,7 +2,9 @@ package middlewares
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/idempotency"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
@@ -19,5 +21,11 @@ func Params(a *fiber.App) {
 		logger.New(),
 		//add recover option.
 		recover.New(),
+		//compress
+		compress.New(compress.Config{
+			Level: compress.LevelBestSpeed, // 1
+		}),
+		//idempotency
+		idempotency.New(),
 	)
 }

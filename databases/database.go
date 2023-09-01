@@ -2,7 +2,6 @@ package databases
 
 import (
 	"goservices/config"
-	"goservices/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -16,14 +15,16 @@ var DATABASE_URI string = config.GetEnvValue("DBUser") + ":" + config.GetEnvValu
 
 func Connect() error {
 	var err error
+	var db *gorm.DB
+
 	switch config.GetEnvValue("DBConnection") {
 	case "mysql":
-		Database, err = gorm.Open(mysql.Open(DATABASE_URI), &gorm.Config{
+		db, err = gorm.Open(mysql.Open(DATABASE_URI), &gorm.Config{
 			SkipDefaultTransaction: true,
 			PrepareStmt:            true,
 		})
 	case "postgres":
-		Database, err = gorm.Open(postgres.Open(DATABASE_URI), &gorm.Config{
+		db, err = gorm.Open(postgres.Open(DATABASE_URI), &gorm.Config{
 			SkipDefaultTransaction: true,
 			PrepareStmt:            true,
 		})
@@ -38,9 +39,9 @@ func Connect() error {
 		panic(err)
 	}
 
-	Database.Logger = logger.Default.LogMode(logger.Info)
+	db.Logger = logger.Default.LogMode(logger.Info)
 
-	Database.AutoMigrate(&models.User{}, &models.PasswordReset{})
+	// db.AutoMigrate(&models.User{}, &models.PasswordReset{})
 
 	return nil
 }

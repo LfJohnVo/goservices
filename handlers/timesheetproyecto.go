@@ -74,7 +74,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 		} else {
 			sqlQuery += " WHERE"
 		}
-		sqlQuery += " proyecto.id = '" + ProyectoID + "'"
+		sqlQuery += " timesheet_proyectos.id = '" + ProyectoID + "'"
 	}
 
 	if EmpID != "" {

@@ -1,13 +1,8 @@
-FROM golang:alpine AS build
+FROM golang:1.21-alpine
 
 WORKDIR /app
-
-COPY go.mod go.sum ./
-RUN go mod download
-
+COPY go.mod .
+COPY go.sum .
 COPY . .
 
-RUN go build -o server .
-
-EXPOSE 3000
-CMD ["./server"]
+RUN go mod download && go mod tidy && go build .

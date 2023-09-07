@@ -1,9 +1,10 @@
 version: "3.9"
+
 services:
-  web:
+  fiberapi:
     build: .
-    container_name: gofibermailer
-    restart: unless-stopped
-    tty: true
     ports:
       - "3000:3000"
+    command: "./goservices"
+    volumes:
+      - .:/goservices

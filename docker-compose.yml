@@ -11,6 +11,8 @@ services:
     command: "./goservices"
     volumes:
       - .:/goservices
+    networks:
+      - tabantajnetwork
 
 networks:
   tabantajnetwork:

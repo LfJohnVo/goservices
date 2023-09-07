@@ -1,10 +1,16 @@
 version: "3.9"
 
 services:
-  fiberapi:
+  reportes-tabantaj:
     build: .
+    container_name: reportes-tabantaj
+    restart: unless-stopped
+    tty: true
     ports:
-      - "3000:3000"
+      - "3300:3300"
     command: "./goservices"
     volumes:
       - .:/goservices
+
+networks:
+  tabantajnetwork:

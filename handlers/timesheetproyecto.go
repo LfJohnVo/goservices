@@ -29,26 +29,52 @@ func GetProyectoReport(c *fiber.Ctx) error {
 	ProyectoID := requestBody.ProyectoID
 
 	// Define the base SQL query
-	sqlQuery := "SELECT " +
-		"timesheet_horas.id, " +
-		"empleados.name as nombreEmpleado, " +
-		"timesheet_proyectos.proyecto as proyecto, " +
-		"timesheet_tareas.tarea as tarea, " +
-		"timesheet_horas.descripcion as descripcion, " +
-		"timesheet.empleado_id, " +
-		"timesheet.fecha_dia, " +
-		"(SELECT supervisor.name FROM empleados AS supervisor WHERE supervisor.id = empleados.supervisor_id) AS supervisor_id, " +
-		"(SELECT SUM(COALESCE(horas_lunes::numeric, 0) + COALESCE(horas_martes::numeric, 0) + COALESCE(horas_miercoles::numeric,0) + COALESCE(horas_jueves::numeric,0) + COALESCE(horas_viernes::numeric,0) + COALESCE(horas_sabado::numeric,0) + COALESCE(horas_domingo::numeric,0)) FROM timesheet_horas AS subquery WHERE subquery.id = timesheet_horas.id) AS totalHoras " +
-		"FROM timesheet_horas " +
-		"JOIN timesheet ON timesheet.id = timesheet_horas.timesheet_id " +
-		"JOIN empleados ON empleados.id = timesheet.empleado_id " +
-		"JOIN timesheet_tareas ON timesheet_tareas.id = timesheet_horas.tarea_id " +
-		"JOIN timesheet_proyectos ON timesheet_proyectos.id = timesheet_horas.proyecto_id"
+	sqlQuery := `
+		SELECT
+			timesheet_horas.id,
+			empleados.name AS nombreEmpleado,
+			timesheet_proyectos.proyecto AS proyecto,
+			timesheet_tareas.tarea AS tarea,
+			timesheet_horas.descripcion AS descripcion,
+			timesheet.empleado_id,
+			timesheet.fecha_dia,
+			(
+				SELECT supervisor.name FROM empleados AS supervisor WHERE supervisor.id = empleados.supervisor_id
+			) AS supervisor_id,
+			(
+				SELECT SUM(
+					COALESCE(horas_lunes::numeric, 0) +
+					COALESCE(horas_martes::numeric, 0) +
+					COALESCE(horas_miercoles::numeric, 0) +
+					COALESCE(horas_jueves::numeric, 0) +
+					COALESCE(horas_viernes::numeric, 0) +
+					COALESCE(horas_sabado::numeric, 0) +
+					COALESCE(horas_domingo::numeric, 0)
+				)
+				FROM timesheet_horas AS subquery
+				WHERE subquery.id = timesheet_horas.id
+			) AS totalHoras
+		FROM
+			timesheet_horas
+		JOIN timesheet ON timesheet.id = timesheet_horas.timesheet_id
+		JOIN empleados ON empleados.id = timesheet.empleado_id
+		JOIN timesheet_tareas ON timesheet_tareas.id = timesheet_horas.tarea_id
+		JOIN timesheet_proyectos ON timesheet_proyectos.id = timesheet_horas.proyecto_id`
 
 	// Define a flag to track whether any conditions have been added
 	conditionsAdded := false
 
-	if FechaInicio != "" {
+	// Construct the date range condition if both FechaInicio and FechaFin are provided
+	if FechaInicio != "" && FechaFin != "" {
+		if conditionsAdded {
+			sqlQuery += " AND"
+		} else {
+			sqlQuery += " WHERE"
+			conditionsAdded = true
+		}
+		sqlQuery += " timesheet.fecha_dia BETWEEN '" + FechaInicio + "' AND '" + FechaFin + "'"
+	} else if FechaInicio != "" {
+		// Construct the condition for FechaInicio if it's provided
 		if conditionsAdded {
 			sqlQuery += " AND"
 		} else {
@@ -56,9 +82,8 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			conditionsAdded = true
 		}
 		sqlQuery += " timesheet.fecha_dia = '" + FechaInicio + "'"
-	}
-
-	if FechaFin != "" {
+	} else if FechaFin != "" {
+		// Construct the condition for FechaFin if it's provided
 		if conditionsAdded {
 			sqlQuery += " AND"
 		} else {
@@ -68,6 +93,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 		sqlQuery += " timesheet.fecha_dia = '" + FechaFin + "'"
 	}
 
+	// Add conditions for ProyectoID and EmpID if provided
 	if ProyectoID != "" {
 		if conditionsAdded {
 			sqlQuery += " AND"
@@ -84,8 +110,9 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			sqlQuery += " WHERE"
 		}
 		sqlQuery += " timesheet.empleado_id = '" + EmpID + "'"
-		conditionsAdded = true
 	}
+
+	conditionsAdded = true
 
 	// Execute the query with the updated SQL query string
 	QueryResult, err := databases.Database.Raw(sqlQuery).Rows()

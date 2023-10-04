@@ -136,7 +136,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 	}()
 
 	// Set column headers
-	headers := []string{"#", "Empleado", "Proyecto", "Tarea", "Descripción", "Empleado ID", "Fecha Día", "Supervisor", "Total Horas"}
+	headers := []string{"Empleado", "Proyecto", "Tarea", "Descripción", "Empleado ID", "Fecha Día", "Supervisor", "Total Horas"}
 	for i, header := range headers {
 		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+i)), 1), header)
 	}
@@ -173,7 +173,11 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			th.EmpleadoID = EmpleadoID.String
 		}
 		if FechaDia.Valid {
-			th.FechaDia = FechaDia.String
+			// Parse the FechaDia string to a Carbon instance
+			parsedDate := carbon.Parse(th.FechaDia)
+	
+			// Format the FechaDia as "dd-mm-yyyy"
+			th.FechaDia = parsedDate.Format("d-m-Y")
 		}
 		if Supervisor.Valid {
 			th.Supervisor = Supervisor.String
@@ -187,15 +191,15 @@ func GetProyectoReport(c *fiber.Ctx) error {
 		timesheetHoras = append(timesheetHoras, th)
 
 		// Add the values to the sheet
-		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+0)), i), i-1)
-		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+1)), i), th.EmpleadoName)
-		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+2)), i), th.Proyecto)
-		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+3)), i), th.Tarea)
-		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+4)), i), th.Descripcion)
-		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+5)), i), th.EmpleadoID)
-		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+6)), i), th.FechaDia)
-		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+7)), i), th.Supervisor)
-		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+8)), i), th.TotalHoras)
+		//f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+0)), i), i-1)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+0)), i), th.EmpleadoName)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+1)), i), th.Proyecto)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+2)), i), th.Tarea)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+3)), i), th.Descripcion)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+4)), i), th.EmpleadoID)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+5)), i), th.FechaDia)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+6)), i), th.Supervisor)
+		f.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+7)), i), th.TotalHoras)
 
 		i++
 	}

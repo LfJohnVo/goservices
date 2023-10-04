@@ -37,7 +37,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			timesheet_tareas.tarea AS tarea,
 			timesheet_horas.descripcion AS descripcion,
 			timesheet.empleado_id,
-			timesheet.fecha_dia,
+			TO_CHAR(timesheet.fecha_dia, 'DD-MM-YYYY') AS fecha_dia,
 			(
 				SELECT supervisor.name FROM empleados AS supervisor WHERE supervisor.id = empleados.supervisor_id
 			) AS supervisor_id,
@@ -173,11 +173,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			th.EmpleadoID = EmpleadoID.String
 		}
 		if FechaDia.Valid {
-			// Parse the FechaDia string to a Carbon instance
-			parsedDate := carbon.Parse(FechaDia)
-	
-			// Format the FechaDia as "dd-mm-yyyy"
-			th.FechaDia = parsedDate.Format("d-m-Y")
+			th.FechaDia = FechaDia.String
 		}
 		if Supervisor.Valid {
 			th.Supervisor = Supervisor.String

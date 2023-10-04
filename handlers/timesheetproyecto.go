@@ -174,7 +174,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 		}
 		if FechaDia.Valid {
 			// Parse the FechaDia string to a Carbon instance
-			parsedDate := carbon.Parse(th.FechaDia)
+			parsedDate := carbon.Parse(FechaDia)
 	
 			// Format the FechaDia as "dd-mm-yyyy"
 			th.FechaDia = parsedDate.Format("d-m-Y")

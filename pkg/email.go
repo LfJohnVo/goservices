@@ -9,7 +9,7 @@ import (
 )
 
 // SendEmail sends an email
-func SendEmail(to []string, subject string, body string, html bool) error {
+func SendEmail(to []string, subject string, body string, html bool, attachments ...string) error {
 	m := gomail.NewMessage()
 	// Set E-Mail sender
 	m.SetHeader("From", config.GetEnvValue("MAIL_USERNAME"))
@@ -28,10 +28,12 @@ func SendEmail(to []string, subject string, body string, html bool) error {
 		m.SetBody("text/plain", body)
 	}
 
-	// Set E-Mail attachment
-	// if file != "" {
-	// 	m.Attach(file)
-	// }
+	//Set E-Mail attachment
+	for _, file := range attachments {
+		if file != "" {
+			m.Attach(file)
+		}
+	}
 
 	// Settings for SMTP server
 	port, _ := strconv.Atoi(config.GetEnvValue("MAIL_PORT"))

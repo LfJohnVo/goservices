@@ -5,6 +5,7 @@ type TimesheetProyectoRequestBody struct {
 	FechaInicio string `json:"fecha_inicio,omitempty"`
 	FechaFin    string `json:"fecha_fin,omitempty"`
 	ProyectoID  string `json:"proy_id,omitempty"`
+	Solicitante string `json:"solicitante"`
 }
 
 type TimesheetProyectoResponseBody struct {

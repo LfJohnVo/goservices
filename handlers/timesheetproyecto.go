@@ -3,15 +3,18 @@ package handlers
 import (
 	"database/sql"
 	"fmt"
+	"goservices/databases"
+	"goservices/models"
+	"goservices/pkg"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-module/carbon/v2"
 	"github.com/xuri/excelize/v2"
 	_ "github.com/xuri/excelize/v2"
-	"goservices/databases"
-	"goservices/models"
-	"log"
-	"net/http"
-	"os"
 )
 
 func GetProyectoReport(c *fiber.Ctx) error {
@@ -27,6 +30,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 	FechaInicio := requestBody.FechaInicio
 	FechaFin := requestBody.FechaFin
 	ProyectoID := requestBody.ProyectoID
+	Solicitante := requestBody.Solicitante
 
 	// Define the base SQL query
 	sqlQuery := `
@@ -212,7 +216,21 @@ func GetProyectoReport(c *fiber.Ctx) error {
 	c.Set("Content-Disposition", "attachment; filename="+sheetName+".xlsx")
 	c.Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-	// Send the XLSX file as the response
-	return c.Status(fiber.StatusOK).SendFile("storage/" + sheetName + ".xlsx")
+	// Specify the file path
+	filePath := "pkg/emailtemplate.html" // Update with your file's path
 
+	// Read the file
+	fileContents, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		fmt.Printf("Error reading the file: %v\n", err)
+		return err
+	}
+
+	// Convert the byte slice to a string
+	contentString := string(fileContents)
+	pkg.SendEmail([]string{Solicitante}, "Reporte registro colaboradores tareas", contentString, true, "storage/"+sheetName+".xlsx")
+
+	// Send the XLSX file as the response
+	//return c.Status(fiber.StatusOK).SendFile("storage/" + sheetName + ".xlsx")
+	return c.Status(fiber.StatusOK).JSON("Reporte generado exitosamente")
 }

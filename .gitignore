@@ -8,8 +8,7 @@
 out
 gen
 tmp
-# .env
+.env
 
 *.xlsx
 goservices
-.env

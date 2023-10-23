@@ -22,7 +22,7 @@ func Connect() error {
 			PrepareStmt:            true,
 		})
 	case "postgres":
-		var DATABASE_URI string = "user=" + config.GetEnvValue("DBUser") + " dbname=" + config.GetEnvValue("DBName") + " host=" + config.GetEnvValue("DBHost") + " port=" + config.GetEnvValue("DBPort") + " sslmode=disable"
+		var DATABASE_URI string = "user=" + config.GetEnvValue("DBUser") + " password=" + config.GetEnvValue("DBPassword") + " dbname=" + config.GetEnvValue("DBName") + " host=" + config.GetEnvValue("DBHost") + " port=" + config.GetEnvValue("DBPort") + " sslmode=disable"
 		Database, err = gorm.Open(postgres.Open(DATABASE_URI), &gorm.Config{
 			SkipDefaultTransaction: true,
 			PrepareStmt:            true,

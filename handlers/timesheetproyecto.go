@@ -41,7 +41,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			timesheet_tareas.tarea AS tarea,
 			timesheet_horas.descripcion AS descripcion,
 			timesheet.empleado_id,
-			TO_CHAR(timesheet.fecha_dia, 'DD-MM-YYYY') AS fecha_dia,
+			TO_CHAR(timesheet.fecha_dia, 'DD/MM/YYYY') AS fecha_dia,
 			(
 				SELECT supervisor.name FROM empleados AS supervisor WHERE supervisor.id = empleados.supervisor_id
 			) AS supervisor_id,

@@ -41,7 +41,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			timesheet_tareas.tarea AS tarea,
 			timesheet_horas.descripcion AS descripcion,
 			timesheet.empleado_id,
-			TO_CHAR(timesheet.fecha_dia, 'DD/MM/YYYY') AS fecha_dia,
+			TO_CHAR(timesheet.fecha_dia, 'YYYY-MM-DD') AS fecha_dia,
 			(
 				SELECT supervisor.name FROM empleados AS supervisor WHERE supervisor.id = empleados.supervisor_id
 			) AS supervisor_id,
@@ -60,10 +60,10 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			) AS totalHoras
 		FROM
 			timesheet_horas
-		JOIN timesheet ON timesheet.id = timesheet_horas.timesheet_id
-		JOIN empleados ON empleados.id = timesheet.empleado_id
-		JOIN timesheet_tareas ON timesheet_tareas.id = timesheet_horas.tarea_id
-		JOIN timesheet_proyectos ON timesheet_proyectos.id = timesheet_horas.proyecto_id`
+		LEFT JOIN timesheet ON timesheet.id = timesheet_horas.timesheet_id
+		LEFT JOIN timesheet_tareas ON timesheet_tareas.id = timesheet_horas.tarea_id
+		LEFT JOIN timesheet_proyectos ON timesheet_proyectos.id = timesheet_horas.proyecto_id
+		LEFT JOIN empleados ON empleados.id = timesheet.empleado_id`
 
 	// Define a flag to track whether any conditions have been added
 	conditionsAdded := false
@@ -76,7 +76,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			sqlQuery += " WHERE"
 			conditionsAdded = true
 		}
-		sqlQuery += " timesheet.fecha_dia BETWEEN '" + FechaInicio + "' AND '" + FechaFin + "'"
+		sqlQuery += " TO_CHAR(timesheet.fecha_dia, 'YYYY-MM-DD') >= '" + FechaInicio + "' AND TO_CHAR(timesheet.fecha_dia, 'YYYY-MM-DD') <= '" + FechaFin + "'"
 	} else if FechaInicio != "" {
 		// Construct the condition for FechaInicio if it's provided
 		if conditionsAdded {
@@ -85,7 +85,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			sqlQuery += " WHERE"
 			conditionsAdded = true
 		}
-		sqlQuery += " timesheet.fecha_dia = '" + FechaInicio + "'"
+		sqlQuery += " TO_CHAR(timesheet.fecha_dia, 'YYYY-MM-DD') = '" + FechaInicio + "'"
 	} else if FechaFin != "" {
 		// Construct the condition for FechaFin if it's provided
 		if conditionsAdded {
@@ -94,7 +94,7 @@ func GetProyectoReport(c *fiber.Ctx) error {
 			sqlQuery += " WHERE"
 			conditionsAdded = true
 		}
-		sqlQuery += " timesheet.fecha_dia = '" + FechaFin + "'"
+		sqlQuery += " TO_CHAR(timesheet.fecha_dia, 'YYYY-MM-DD') = '" + FechaFin + "'"
 	}
 
 	// Add conditions for ProyectoID and EmpID if provided
